@@ -6,7 +6,8 @@
     "src"
   ],
   "package-specs": {
-    "module": "commonjs"
+    "module": "commonjs",
+    "in-source": true
   },
   "suffix": ".js",
   "bs-dependencies": [
