@@ -5,7 +5,7 @@ type config = [
   | `Pg of Pg.config
 ]
 
-external init : 'a Js.t -> client = "knew" [@@bs.module]
+external init : 'a Js.t -> client = "knex" [@@bs.module]
 
 external add_client : 'a Js.t -> string -> unit = "client" [@@bs.set]
 
