@@ -17,8 +17,16 @@ function BuildQuery(funarg) {
   };
   var first = function (t) {
     var partial_arg = t.first();
+    var partial_arg$1 = function (param) {
+      return BsCallback.from_promise(partial_arg, param);
+    };
     return (function (param) {
-        return BsCallback.from_promise(partial_arg, param);
+        return BsCallback.$great$great(partial_arg$1, (function (ret) {
+                      var partial_arg = (ret == null) ? /* None */0 : [ret];
+                      return (function (param) {
+                          return BsCallback.$$return(partial_arg, param);
+                        });
+                    }), param);
       });
   };
   var select = (function (knex, args) {

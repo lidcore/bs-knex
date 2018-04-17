@@ -1,3 +1,5 @@
+open BsCallback
+
 type instance
 type client = string -> instance [@bs]
 
@@ -24,7 +26,7 @@ module type Query_t = sig
   val knex : string -> t
   val where : t -> 'a Js.t -> t
   val returning : t -> string -> t
-  val first : t -> 'a Js.t Js.Nullable.t BsCallback.t
+  val first : t -> 'a Js.t option BsCallback.t
   val select : t -> ?columns:string array -> 'a Js.t array BsCallback.t
   val update : t -> 'a Js.t -> 'b Js.t array BsCallback.t
   val insert : t -> 'a Js.t -> 'b Js.t array BsCallback.t
@@ -40,7 +42,8 @@ module BuildQuery(Config:Config_t) = struct
   external returning : t -> string -> t = "returning" [@@bs.send]
   external first : t -> 'a Js.t Js.Nullable.t Js.Promise.t = "first" [@@bs.send]
   let first t =
-    BsCallback.from_promise (first t)
+    BsCallback.from_promise (first t) >> fun ret ->
+      BsCallback.return (Js.toOption ret)
 
   (* [@@bs.splice] needs syntactic arrays, i.e. fixed at compile time.. 💩*)
   let select : t -> string array -> 'a Js.Promise.t [@bs] = [%bs.raw{|function (knex, args) {
