@@ -10,14 +10,8 @@ function init(param) {
   return Knex(config);
 }
 
-function BuildQuery(Config) {
-  var knex = Config[/* client */0];
-  var where = function (args, t) {
-    return t.where(args);
-  };
-  var returning = function (args, t) {
-    return t.returning(args);
-  };
+function BuildQuery(funarg) {
+  var knex = funarg[/* client */0];
   var first = function (t) {
     var partial_arg = t.first();
     return (function (param) {
@@ -27,27 +21,29 @@ function BuildQuery(Config) {
   var select = (function (knex, args) {
     return knex.select.apply(knex, args);
   });
-  var select$1 = function ($staropt$star, t) {
+  var select$1 = function (t, $staropt$star) {
     var columns = $staropt$star ? $staropt$star[0] : /* array */[];
     var partial_arg = select(t, columns);
     return (function (param) {
         return Callback$BsCallback.from_promise(partial_arg, param);
       });
   };
-  var update = function (args, t) {
-    return t.update(args);
-  };
-  var insert = function (args, t) {
-    return t.insert(args);
-  };
-  return /* module */[
-          /* knex */knex,
-          /* where */where,
-          /* returning */returning,
-          /* first */first,
-          /* select */select$1,
-          /* update */update,
-          /* insert */insert
+  return [
+          knex,
+          (function (prim, prim$1) {
+              return prim.where(prim$1);
+            }),
+          (function (prim, prim$1) {
+              return prim.returning(prim$1);
+            }),
+          first,
+          select$1,
+          (function (prim, prim$1) {
+              return prim.update(prim$1);
+            }),
+          (function (prim, prim$1) {
+              return prim.insert(prim$1);
+            })
         ];
 }
 

@@ -21,12 +21,12 @@ end
 module type Query_t = sig
   type t
   val knex : string -> t
-  val where : 'a Js.t -> t -> t
-  val returning : string -> t -> t
+  val where : t -> 'a Js.t -> t
+  val returning : t -> string -> t
   val first : t -> 'a Js.t Js.Nullable.t BsCallback.Callback.t
-  val select : ?columns:string array -> t -> 'a Js.t array BsCallback.Callback.t
-  val update : 'a Js.t -> t -> 'b Js.t array BsCallback.Callback.t
-  val insert : 'a Js.t -> t -> 'b Js.t array BsCallback.Callback.t
+  val select : t -> ?columns:string array -> 'a Js.t array BsCallback.Callback.t
+  val update : t -> 'a Js.t -> 'b Js.t array BsCallback.Callback.t
+  val insert : t -> 'a Js.t -> 'b Js.t array BsCallback.Callback.t
 end
 
 module BuildQuery(Config:Config_t) = struct
@@ -34,11 +34,7 @@ module BuildQuery(Config:Config_t) = struct
   let knex = Config.client
 
   external where : t -> 'a Js.t -> t = "where" [@@bs.send]
-  let where args t = where t args
-
   external returning : t -> string -> t = "returning" [@@bs.send]
-  let returning args t = returning t args
-
   external first : t -> 'a Js.t Js.Nullable.t Js.Promise.t = "first" [@@bs.send]
   let first t =
     BsCallback.Callback.from_promise (first t)
@@ -47,12 +43,9 @@ module BuildQuery(Config:Config_t) = struct
   let select : t -> string array -> 'a Js.Promise.t [@bs] = [%bs.raw{|function (knex, args) {
     return knex.select.apply(knex, args);
   }|}]
-  let select ?(columns=[||]) t =
+  let select t ?(columns=[||]) =
     BsCallback.Callback.from_promise (select t columns [@bs])
 
   external update : t -> 'a Js.t -> 'b Js.t array BsCallback.Callback.t = "update" [@@bs.send]
-  let update args t = update t args
-
   external insert : t -> 'a Js.t -> 'b Js.t array BsCallback.Callback.t = "insert" [@@bs.send]
-  let insert args t = insert t args
 end
