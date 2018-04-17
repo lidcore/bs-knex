@@ -2,7 +2,7 @@
 'use strict';
 
 var Knex = require("knex");
-var Callback$BsCallback = require("bs-callback/src/callback.js");
+var BsCallback = require("bs-callback/src/bsCallback.js");
 
 function init(param) {
   var config = param[1];
@@ -18,7 +18,7 @@ function BuildQuery(funarg) {
   var first = function (t) {
     var partial_arg = t.first();
     return (function (param) {
-        return Callback$BsCallback.from_promise(partial_arg, param);
+        return BsCallback.from_promise(partial_arg, param);
       });
   };
   var select = (function (knex, args) {
@@ -28,7 +28,19 @@ function BuildQuery(funarg) {
     var columns = $staropt$star ? $staropt$star[0] : /* array */[];
     var partial_arg = select(t, columns);
     return (function (param) {
-        return Callback$BsCallback.from_promise(partial_arg, param);
+        return BsCallback.from_promise(partial_arg, param);
+      });
+  };
+  var update = function (t, args) {
+    var partial_arg = t.update(args);
+    return (function (param) {
+        return BsCallback.from_promise(partial_arg, param);
+      });
+  };
+  var insert = function (t, args) {
+    var partial_arg = t.insert(args);
+    return (function (param) {
+        return BsCallback.from_promise(partial_arg, param);
       });
   };
   return [
@@ -42,12 +54,8 @@ function BuildQuery(funarg) {
             }),
           first,
           select$1,
-          (function (prim, prim$1) {
-              return prim.update(prim$1);
-            }),
-          (function (prim, prim$1) {
-              return prim.insert(prim$1);
-            })
+          update,
+          insert
         ];
 }
 

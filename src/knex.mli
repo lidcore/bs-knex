@@ -16,10 +16,10 @@ module type Query_t = sig
   val knex : string -> t
   val where : t -> 'a Js.t -> t
   val returning : t -> string -> t
-  val first : t -> 'a Js.t Js.Nullable.t BsCallback.Callback.t
-  val select : t -> ?columns:string array -> 'a Js.t array BsCallback.Callback.t
-  val update : t -> 'a Js.t -> 'b Js.t array BsCallback.Callback.t
-  val insert : t -> 'a Js.t -> 'b Js.t array BsCallback.Callback.t
+  val first : t -> 'a Js.t Js.Nullable.t BsCallback.t
+  val select : t -> ?columns:string array -> 'a Js.t array BsCallback.t
+  val update : t -> 'a Js.t -> 'b Js.t array BsCallback.t
+  val insert : t -> 'a Js.t -> 'b Js.t array BsCallback.t
 end
 
 module BuildQuery(Config:Config_t) : Query_t

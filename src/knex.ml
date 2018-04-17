@@ -24,10 +24,10 @@ module type Query_t = sig
   val knex : string -> t
   val where : t -> 'a Js.t -> t
   val returning : t -> string -> t
-  val first : t -> 'a Js.t Js.Nullable.t BsCallback.Callback.t
-  val select : t -> ?columns:string array -> 'a Js.t array BsCallback.Callback.t
-  val update : t -> 'a Js.t -> 'b Js.t array BsCallback.Callback.t
-  val insert : t -> 'a Js.t -> 'b Js.t array BsCallback.Callback.t
+  val first : t -> 'a Js.t Js.Nullable.t BsCallback.t
+  val select : t -> ?columns:string array -> 'a Js.t array BsCallback.t
+  val update : t -> 'a Js.t -> 'b Js.t array BsCallback.t
+  val insert : t -> 'a Js.t -> 'b Js.t array BsCallback.t
 end
 
 module BuildQuery(Config:Config_t) = struct
@@ -40,15 +40,20 @@ module BuildQuery(Config:Config_t) = struct
   external returning : t -> string -> t = "returning" [@@bs.send]
   external first : t -> 'a Js.t Js.Nullable.t Js.Promise.t = "first" [@@bs.send]
   let first t =
-    BsCallback.Callback.from_promise (first t)
+    BsCallback.from_promise (first t)
 
   (* [@@bs.splice] needs syntactic arrays, i.e. fixed at compile time.. 💩*)
   let select : t -> string array -> 'a Js.Promise.t [@bs] = [%bs.raw{|function (knex, args) {
     return knex.select.apply(knex, args);
   }|}]
   let select t ?(columns=[||]) =
-    BsCallback.Callback.from_promise (select t columns [@bs])
+    BsCallback.from_promise (select t columns [@bs])
 
-  external update : t -> 'a Js.t -> 'b Js.t array BsCallback.Callback.t = "update" [@@bs.send]
-  external insert : t -> 'a Js.t -> 'b Js.t array BsCallback.Callback.t = "insert" [@@bs.send]
+  external update : t -> 'a Js.t -> 'b Js.t array Js.Promise.t = "update" [@@bs.send]
+  let update t args =
+    BsCallback.from_promise (update t args)
+
+  external insert : t -> 'a Js.t -> 'b Js.t array Js.Promise.t = "insert" [@@bs.send]
+  let insert t args =
+    BsCallback.from_promise (insert t args)
 end
