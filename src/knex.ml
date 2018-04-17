@@ -1,5 +1,5 @@
 type instance
-type client = string -> instance
+type client = string -> instance [@bs]
 
 type config = [
   | `Pg of Pg.config
@@ -20,6 +20,7 @@ end
 
 module type Query_t = sig
   type t
+  val client : client
   val knex : string -> t
   val where : t -> 'a Js.t -> t
   val returning : t -> string -> t
@@ -31,7 +32,9 @@ end
 
 module BuildQuery(Config:Config_t) = struct
   type t = instance
-  let knex = Config.client
+  let client = Config.client
+  let knex table =
+    Config.client table [@bs]
 
   external where : t -> 'a Js.t -> t = "where" [@@bs.send]
   external returning : t -> string -> t = "returning" [@@bs.send]

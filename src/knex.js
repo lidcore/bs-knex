@@ -11,7 +11,10 @@ function init(param) {
 }
 
 function BuildQuery(funarg) {
-  var knex = funarg[/* client */0];
+  var client = funarg[/* client */0];
+  var knex = function (table) {
+    return funarg[/* client */0](table);
+  };
   var first = function (t) {
     var partial_arg = t.first();
     return (function (param) {
@@ -29,6 +32,7 @@ function BuildQuery(funarg) {
       });
   };
   return [
+          client,
           knex,
           (function (prim, prim$1) {
               return prim.where(prim$1);

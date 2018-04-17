@@ -12,6 +12,7 @@ end
 
 module type Query_t = sig
   type t
+  val client : client
   val knex : string -> t
   val where : t -> 'a Js.t -> t
   val returning : t -> string -> t
