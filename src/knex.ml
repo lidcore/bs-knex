@@ -28,7 +28,7 @@ module type Query_t = sig
   val returning : t -> string -> t
   val first : t -> 'a Js.t option BsCallback.t
   val select : t -> ?columns:string array -> 'a Js.t array BsCallback.t
-  val update : t -> 'a Js.t -> 'b Js.t array BsCallback.t
+  val update : t -> 'a Js.t -> int BsCallback.t
   val insert : t -> 'a Js.t -> 'b Js.t array BsCallback.t
 end
 
@@ -52,7 +52,7 @@ module BuildQuery(Config:Config_t) = struct
   let select t ?(columns=[||]) =
     BsCallback.from_promise (select t columns [@bs])
 
-  external update : t -> 'a Js.t -> 'b Js.t array Js.Promise.t = "update" [@@bs.send]
+  external update : t -> 'a Js.t -> int Js.Promise.t = "update" [@@bs.send]
   let update t args =
     BsCallback.from_promise (update t args)
 
