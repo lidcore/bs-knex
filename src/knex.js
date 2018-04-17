@@ -2,7 +2,7 @@
 'use strict';
 
 var Knex = require("knex");
-var Callback = require("bs-callback/src/callback.js");
+var Callback$BsCallback = require("bs-callback/src/callback.js");
 
 function init(param) {
   var config = param[1];
@@ -23,7 +23,7 @@ function BuildQuery(Config) {
   var first = function (t) {
     var partial_arg = t.first();
     return (function (param) {
-        return Callback.from_promise(partial_arg, param);
+        return Callback$BsCallback.from_promise(partial_arg, param);
       });
   };
   var select = (function (knex, args) {
@@ -33,7 +33,7 @@ function BuildQuery(Config) {
     var columns = $staropt$star ? $staropt$star[0] : /* array */[];
     var partial_arg = select(t, columns);
     return (function (param) {
-        return Callback.from_promise(partial_arg, param);
+        return Callback$BsCallback.from_promise(partial_arg, param);
       });
   };
   var update = function (args, t) {

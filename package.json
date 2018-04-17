@@ -15,7 +15,7 @@
     "bs-platform": "^2.2.3"
   },
   "dependencies": {
-    "bs-callback": "^1.0.16",
+    "bs-callback": "^1.1.0",
     "knex": "^0.14.6"
   }
 }
