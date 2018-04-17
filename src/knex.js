@@ -2,6 +2,7 @@
 'use strict';
 
 var Knex = require("knex");
+var Callback = require("bs-callback/src/callback.js");
 
 function init(param) {
   var config = param[1];
@@ -9,16 +10,49 @@ function init(param) {
   return Knex(config);
 }
 
-function Make(funarg) {
-  var knex = funarg[/* client */0];
-  return [
-          knex,
-          (function (prim, prim$1) {
-              return prim$1.where(prim);
-            })
+function BuildQuery(Config) {
+  var knex = function (table) {
+    return Config[/* client */0](table);
+  };
+  var where = function (args, t) {
+    return t.where(args);
+  };
+  var returning = function (args, t) {
+    return t.returning(args);
+  };
+  var first = function (t) {
+    var partial_arg = t.first();
+    return (function (param) {
+        return Callback.from_promise(partial_arg, param);
+      });
+  };
+  var select = (function (knex, args) {
+    return knex.select.apply(knex, args);
+  });
+  var select$1 = function ($staropt$star, t) {
+    var columns = $staropt$star ? $staropt$star[0] : /* array */[];
+    var partial_arg = select(t, columns);
+    return (function (param) {
+        return Callback.from_promise(partial_arg, param);
+      });
+  };
+  var update = function (args, t) {
+    return t.update(args);
+  };
+  var insert = function (args, t) {
+    return t.insert(args);
+  };
+  return /* module */[
+          /* knex */knex,
+          /* where */where,
+          /* returning */returning,
+          /* first */first,
+          /* select */select$1,
+          /* update */update,
+          /* insert */insert
         ];
 }
 
 exports.init = init;
-exports.Make = Make;
+exports.BuildQuery = BuildQuery;
 /* knex Not a pure module */

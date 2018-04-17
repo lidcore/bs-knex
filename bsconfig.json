@@ -11,6 +11,6 @@
   },
   "suffix": ".js",
   "bs-dependencies": [
-      // add your bs-dependencies here 
+    "bs-callback"
   ]
 }

@@ -10,10 +10,16 @@ module type Config_t = sig
   val client : client
 end
 
-module type Instance_t = sig
+module type Query_t = sig
   type t
   val knex : string -> t
-  val where_ : 'a Js.t -> t -> t
+  val where : 'a Js.t -> t -> t
+  val update : 'a Js.t -> t -> t
+  val returning : string -> t -> t
+  val first : t -> 'a Js.t Js.Nullable.t Callback.t
+  val select : ?columns:string array -> t -> 'a Js.t array Callback.t
+  val update : 'a Js.t -> t -> 'b Js.t array Callback.t
+  val insert : 'a Js.t -> t -> 'b Js.t array Callback.t
 end
 
-module Make(Config:Config_t) : Instance_t
+module BuildQuery(Config:Config_t) : Query_t
