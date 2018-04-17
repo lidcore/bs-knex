@@ -11,9 +11,7 @@ function init(param) {
 }
 
 function BuildQuery(Config) {
-  var knex = function (table) {
-    return Config[/* client */0](table);
-  };
+  var knex = Config[/* client */0];
   var where = function (args, t) {
     return t.where(args);
   };

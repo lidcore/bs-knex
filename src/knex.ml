@@ -1,5 +1,5 @@
 type instance
-type client = string -> instance [@bs]
+type client = string -> instance
 
 type config = [
   | `Pg of Pg.config
@@ -31,8 +31,7 @@ end
 
 module BuildQuery(Config:Config_t) = struct
   type t = instance
-  let knex table =
-    Config.client table [@bs]
+  let knex = Config.client
 
   external where : t -> 'a Js.t -> t = "where" [@@bs.send]
   let where args t = where t args
