@@ -1,7 +1,6 @@
 open BsCallback
 
-type instance
-type client = string -> instance [@bs]
+type client
 
 type config = [
   | `Pg of Pg.config
@@ -20,24 +19,22 @@ module type Config_t = sig
   val client : client
 end
 
-module type Query_t = sig
+module type QueryOps_t = sig
   type t
-  val client : client
-  val knex : string -> t
   val where : t -> 'a Js.t -> t
   val returning : t -> string -> t
   val first : t -> 'a Js.t option BsCallback.t
-  val select : t -> ?columns:string array -> 'a Js.t array BsCallback.t
-  val update : t -> 'a Js.t -> int BsCallback.t
-  val insert : t -> 'a Js.t -> int array BsCallback.t
+  val select : t -> ?columns:string array -> from:string -> 'a Js.t array BsCallback.t
+  val update : t -> into:string -> 'a Js.t -> int BsCallback.t
+  val insert : t -> into:string -> 'a Js.t -> int array BsCallback.t
 end
 
-module BuildQuery(Config:Config_t) = struct
-  type t = instance
-  let client = Config.client
-  let knex table =
-    Config.client table [@bs]
+module type OpsConfig_t = sig
+  type t
+end
 
+module QueryOps(Config:OpsConfig_t) = struct
+  include Config
   external where : t -> 'a Js.t -> t = "where" [@@bs.send]
   external returning : t -> string -> t = "returning" [@@bs.send]
   external first : t -> 'a Js.t Js.Nullable.t Js.Promise.t = "first" [@@bs.send]
@@ -46,17 +43,40 @@ module BuildQuery(Config:Config_t) = struct
       BsCallback.return (Js.toOption ret)
 
   (* [@@bs.splice] needs syntactic arrays, i.e. fixed at compile time.. 💩*)
-  let select : t -> string array -> 'a Js.Promise.t [@bs] = [%bs.raw{|function (knex, args) {
-    return knex.select.apply(knex, args);
+  let select : t -> string array -> string -> 'a Js.Promise.t [@bs] = [%bs.raw{|function (knex, args, from) {
+    return knex.select.apply(knex, args).from(from);
   }|}]
-  let select t ?(columns=[||]) =
-    BsCallback.from_promise (select t columns [@bs])
+  let select t ?(columns=[||]) ~from =
+    BsCallback.from_promise (select t columns from [@bs])
+
+  external into_ : t -> string -> t = "into" [@@bs.send]
 
   external update : t -> 'a Js.t -> int Js.Promise.t = "update" [@@bs.send]
-  let update t args =
-    BsCallback.from_promise (update t args)
+  let update t ~into args =
+    BsCallback.from_promise (into_ t into |. update args)
 
   external insert : t -> 'a Js.t -> int array Js.Promise.t = "insert" [@@bs.send]
-  let insert t args =
-    BsCallback.from_promise (insert t args)
+  let insert t ~into args =
+    BsCallback.from_promise (into_ t into |. insert args)
+end
+
+module Config = struct
+  type t = client
+end
+include QueryOps(Config) 
+
+module Transaction = struct
+  type transaction
+
+  external transaction : client -> (transaction -> 'a Js.Promise.t [@bs]) -> 'a Js.Promise.t = "" [@@bs.send]
+
+  let execute client cb =
+    BsCallback.from_promise
+      (transaction client (fun [@bs] t ->
+        BsCallback.to_promise (cb t)))
+
+  module QueryOpsConfig = struct
+    type t = transaction
+  end
+  include QueryOps(QueryOpsConfig)
 end

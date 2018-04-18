@@ -2,6 +2,7 @@
 'use strict';
 
 var Knex = require("knex");
+var Curry = require("bs-platform/lib/js/curry.js");
 var BsCallback = require("bs-callback/src/bsCallback.js");
 
 function init(param) {
@@ -10,63 +11,129 @@ function init(param) {
   return Knex(config);
 }
 
-function BuildQuery(funarg) {
-  var client = funarg[/* client */0];
-  var knex = function (table) {
-    return funarg[/* client */0](table);
+function first(t) {
+  var partial_arg = t.first();
+  var partial_arg$1 = function (param) {
+    return BsCallback.from_promise(partial_arg, param);
   };
-  var first = function (t) {
-    var partial_arg = t.first();
-    var partial_arg$1 = function (param) {
-      return BsCallback.from_promise(partial_arg, param);
-    };
-    return (function (param) {
-        return BsCallback.$great$great(partial_arg$1, (function (ret) {
-                      var partial_arg = (ret == null) ? /* None */0 : [ret];
-                      return (function (param) {
-                          return BsCallback.$$return(partial_arg, param);
-                        });
-                    }), param);
-      });
-  };
-  var select = (function (knex, args) {
-    return knex.select.apply(knex, args);
-  });
-  var select$1 = function (t, $staropt$star) {
-    var columns = $staropt$star ? $staropt$star[0] : /* array */[];
-    var partial_arg = select(t, columns);
-    return (function (param) {
-        return BsCallback.from_promise(partial_arg, param);
-      });
-  };
-  var update = function (t, args) {
-    var partial_arg = t.update(args);
-    return (function (param) {
-        return BsCallback.from_promise(partial_arg, param);
-      });
-  };
-  var insert = function (t, args) {
-    var partial_arg = t.insert(args);
-    return (function (param) {
-        return BsCallback.from_promise(partial_arg, param);
-      });
-  };
-  return [
-          client,
-          knex,
-          (function (prim, prim$1) {
-              return prim.where(prim$1);
-            }),
-          (function (prim, prim$1) {
-              return prim.returning(prim$1);
-            }),
-          first,
-          select$1,
-          update,
-          insert
-        ];
+  return (function (param) {
+      return BsCallback.$great$great(partial_arg$1, (function (ret) {
+                    var partial_arg = (ret == null) ? /* None */0 : [ret];
+                    return (function (param) {
+                        return BsCallback.$$return(partial_arg, param);
+                      });
+                  }), param);
+    });
 }
 
+var select = (function (knex, args, from) {
+    return knex.select.apply(knex, args).from(from);
+  });
+
+function select$1(t, $staropt$star, from) {
+  var columns = $staropt$star ? $staropt$star[0] : /* array */[];
+  var partial_arg = select(t, columns, from);
+  return (function (param) {
+      return BsCallback.from_promise(partial_arg, param);
+    });
+}
+
+function update(t, into, args) {
+  var partial_arg = t.into(into).update(args);
+  return (function (param) {
+      return BsCallback.from_promise(partial_arg, param);
+    });
+}
+
+function insert(t, into, args) {
+  var partial_arg = t.into(into).insert(args);
+  return (function (param) {
+      return BsCallback.from_promise(partial_arg, param);
+    });
+}
+
+function execute(client, cb) {
+  var partial_arg = client.transaction((function (t) {
+          return BsCallback.to_promise(Curry._1(cb, t));
+        }));
+  return (function (param) {
+      return BsCallback.from_promise(partial_arg, param);
+    });
+}
+
+function first$1(t) {
+  var partial_arg = t.first();
+  var partial_arg$1 = function (param) {
+    return BsCallback.from_promise(partial_arg, param);
+  };
+  return (function (param) {
+      return BsCallback.$great$great(partial_arg$1, (function (ret) {
+                    var partial_arg = (ret == null) ? /* None */0 : [ret];
+                    return (function (param) {
+                        return BsCallback.$$return(partial_arg, param);
+                      });
+                  }), param);
+    });
+}
+
+var select$2 = (function (knex, args, from) {
+    return knex.select.apply(knex, args).from(from);
+  });
+
+function select$3(t, $staropt$star, from) {
+  var columns = $staropt$star ? $staropt$star[0] : /* array */[];
+  var partial_arg = select$2(t, columns, from);
+  return (function (param) {
+      return BsCallback.from_promise(partial_arg, param);
+    });
+}
+
+function update$1(t, into, args) {
+  var partial_arg = t.into(into).update(args);
+  return (function (param) {
+      return BsCallback.from_promise(partial_arg, param);
+    });
+}
+
+function insert$1(t, into, args) {
+  var partial_arg = t.into(into).insert(args);
+  return (function (param) {
+      return BsCallback.from_promise(partial_arg, param);
+    });
+}
+
+function where(prim, prim$1) {
+  return prim.where(prim$1);
+}
+
+function returning(prim, prim$1) {
+  return prim.returning(prim$1);
+}
+
+function Transaction_000(prim, prim$1) {
+  return prim.where(prim$1);
+}
+
+function Transaction_001(prim, prim$1) {
+  return prim.returning(prim$1);
+}
+
+var Transaction = [
+  Transaction_000,
+  Transaction_001,
+  first$1,
+  select$3,
+  update$1,
+  insert$1,
+  execute
+];
+
 exports.init = init;
-exports.BuildQuery = BuildQuery;
-/* knex Not a pure module */
+exports.where = where;
+exports.returning = returning;
+exports.first = first;
+exports.select = select$1;
+exports.update = update;
+exports.insert = insert;
+exports.Transaction = Transaction;
+/* select Not a pure module */
