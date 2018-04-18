@@ -23,9 +23,9 @@ module type QueryOps_t = sig
   type t
   val where : t -> 'a Js.t -> t
   val returning : t -> string -> t
-  val first : t -> 'a Js.t option BsCallback.t
+  val first : t -> from:string -> 'a Js.t option BsCallback.t
   val select : t -> ?columns:string array -> from:string -> 'a Js.t array BsCallback.t
-  val update : t -> into:string -> 'a Js.t -> int BsCallback.t
+  val update : t -> table:string -> 'a Js.t -> int BsCallback.t
   val insert : t -> into:string -> 'a Js.t -> int array BsCallback.t
 end
 
@@ -37,9 +37,12 @@ module QueryOps(Config:OpsConfig_t) = struct
   include Config
   external where : t -> 'a Js.t -> t = "where" [@@bs.send]
   external returning : t -> string -> t = "returning" [@@bs.send]
+
+  external from_ : t -> string -> t = "from" [@@bs.send]
+
   external first : t -> 'a Js.t Js.Nullable.t Js.Promise.t = "first" [@@bs.send]
-  let first t =
-    BsCallback.from_promise (first t) >> fun ret ->
+  let first t ~from =
+    BsCallback.from_promise (from_ t from |. first) >> fun ret ->
       BsCallback.return (Js.toOption ret)
 
   (* [@@bs.splice] needs syntactic arrays, i.e. fixed at compile time.. 💩*)
@@ -52,8 +55,8 @@ module QueryOps(Config:OpsConfig_t) = struct
   external into_ : t -> string -> t = "into" [@@bs.send]
 
   external update : t -> 'a Js.t -> int Js.Promise.t = "update" [@@bs.send]
-  let update t ~into args =
-    BsCallback.from_promise (into_ t into |. update args)
+  let update t ~table args =
+    BsCallback.from_promise (from_ t table |. update args)
 
   external insert : t -> 'a Js.t -> int array Js.Promise.t = "insert" [@@bs.send]
   let insert t ~into args =

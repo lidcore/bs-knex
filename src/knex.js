@@ -11,8 +11,8 @@ function init(param) {
   return Knex(config);
 }
 
-function first(t) {
-  var partial_arg = t.first();
+function first(t, from) {
+  var partial_arg = t.from(from).first();
   var partial_arg$1 = function (param) {
     return BsCallback.from_promise(partial_arg, param);
   };
@@ -38,8 +38,8 @@ function select$1(t, $staropt$star, from) {
     });
 }
 
-function update(t, into, args) {
-  var partial_arg = t.into(into).update(args);
+function update(t, table, args) {
+  var partial_arg = t.from(table).update(args);
   return (function (param) {
       return BsCallback.from_promise(partial_arg, param);
     });
@@ -61,8 +61,8 @@ function execute(client, cb) {
     });
 }
 
-function first$1(t) {
-  var partial_arg = t.first();
+function first$1(t, from) {
+  var partial_arg = t.from(from).first();
   var partial_arg$1 = function (param) {
     return BsCallback.from_promise(partial_arg, param);
   };
@@ -88,8 +88,8 @@ function select$3(t, $staropt$star, from) {
     });
 }
 
-function update$1(t, into, args) {
-  var partial_arg = t.into(into).update(args);
+function update$1(t, table, args) {
+  var partial_arg = t.from(table).update(args);
   return (function (param) {
       return BsCallback.from_promise(partial_arg, param);
     });
