@@ -24,13 +24,15 @@ module type QueryOps_t = sig
   val insert : t -> into:string -> 'a Js.t -> int array async
 end
 
+module type Transaction_t = sig
+  include QueryOps_t
+  val execute : client -> (t -> 'a async) -> 'a async
+end
+
 module type Query_t = sig
   include QueryOps_t with type t := client
 
-  module Transaction : sig
-    include QueryOps_t
-    val execute : client -> (t -> 'a async) -> 'a async
-  end
+  module Transaction : Transaction_t with type 'a async := 'a async
 end
 
 module type AsyncMonad_t = sig
