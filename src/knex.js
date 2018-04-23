@@ -72,11 +72,19 @@ function insert$1(t, into, args) {
 }
 
 function raw$2(t, sql) {
-  return Curry._1(BsCallback.from_promise, t.raw(sql));
+  var partial_arg = t.raw(sql);
+  return (function (param) {
+      partial_arg.asCallback(param);
+      return /* () */0;
+    });
 }
 
 function first$2(t, from) {
-  return Curry._2(BsCallback.$great$great, Curry._1(BsCallback.from_promise, t.from(from).first()), (function (ret) {
+  var partial_arg = t.from(from).first();
+  return Curry._2(BsCallback.$great$great, (function (param) {
+                partial_arg.asCallback(param);
+                return /* () */0;
+              }), (function (ret) {
                 return Curry._1(BsCallback.$$return, (ret == null) ? /* None */0 : [ret]);
               }));
 }
@@ -87,29 +95,53 @@ var select$4 = (function (knex, args, from) {
 
 function select$5(t, $staropt$star, from) {
   var columns = $staropt$star ? $staropt$star[0] : /* array */[];
-  return Curry._1(BsCallback.from_promise, select$4(t, columns, from));
+  var partial_arg = select$4(t, columns, from);
+  return (function (param) {
+      partial_arg.asCallback(param);
+      return /* () */0;
+    });
 }
 
 function update$2(t, table, args) {
-  return Curry._1(BsCallback.from_promise, t.from(table).update(args));
+  var partial_arg = t.from(table).update(args);
+  return (function (param) {
+      partial_arg.asCallback(param);
+      return /* () */0;
+    });
 }
 
 function insert$2(t, into, args) {
-  return Curry._1(BsCallback.from_promise, t.into(into).insert(args));
+  var partial_arg = t.into(into).insert(args);
+  return (function (param) {
+      partial_arg.asCallback(param);
+      return /* () */0;
+    });
 }
 
 function execute$1(client, cb) {
-  return Curry._1(BsCallback.from_promise, client.transaction((function (t) {
-                    return BsCallback.to_promise(Curry._1(cb, t));
-                  })));
+  var partial_arg = client.transaction((function (t) {
+          return BsCallback.to_promise(Curry._1(cb, t));
+        }));
+  return (function (param) {
+      partial_arg.asCallback(param);
+      return /* () */0;
+    });
 }
 
 function raw$3(t, sql) {
-  return Curry._1(BsCallback.from_promise, t.raw(sql));
+  var partial_arg = t.raw(sql);
+  return (function (param) {
+      partial_arg.asCallback(param);
+      return /* () */0;
+    });
 }
 
 function first$3(t, from) {
-  return Curry._2(BsCallback.$great$great, Curry._1(BsCallback.from_promise, t.from(from).first()), (function (ret) {
+  var partial_arg = t.from(from).first();
+  return Curry._2(BsCallback.$great$great, (function (param) {
+                partial_arg.asCallback(param);
+                return /* () */0;
+              }), (function (ret) {
                 return Curry._1(BsCallback.$$return, (ret == null) ? /* None */0 : [ret]);
               }));
 }
@@ -120,15 +152,27 @@ var select$6 = (function (knex, args, from) {
 
 function select$7(t, $staropt$star, from) {
   var columns = $staropt$star ? $staropt$star[0] : /* array */[];
-  return Curry._1(BsCallback.from_promise, select$6(t, columns, from));
+  var partial_arg = select$6(t, columns, from);
+  return (function (param) {
+      partial_arg.asCallback(param);
+      return /* () */0;
+    });
 }
 
 function update$3(t, table, args) {
-  return Curry._1(BsCallback.from_promise, t.from(table).update(args));
+  var partial_arg = t.from(table).update(args);
+  return (function (param) {
+      partial_arg.asCallback(param);
+      return /* () */0;
+    });
 }
 
 function insert$3(t, into, args) {
-  return Curry._1(BsCallback.from_promise, t.into(into).insert(args));
+  var partial_arg = t.into(into).insert(args);
+  return (function (param) {
+      partial_arg.asCallback(param);
+      return /* () */0;
+    });
 }
 
 function Make(funarg) {

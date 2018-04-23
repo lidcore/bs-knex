@@ -118,5 +118,13 @@ end)
 
 module Callback = Make(struct
   include BsCallback
+ 
+  (* Use utility provided by the API. Might enhance JS
+   * compatibility by carriying some of the API methods
+   * on the object, i.e. for composing with update statements. *)
+  external asCallback : 'a Js.Promise.t -> 'a BsCallback.callback -> unit = "asCallback" [@@bs.send]
+  let from_promise t = fun (cb) ->
+    asCallback t cb
+ 
   let compose a b = a >> b
 end)
