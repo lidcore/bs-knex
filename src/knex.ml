@@ -17,6 +17,7 @@ module type QueryOps_t = sig
   type t
   type 'a async
   val raw : t -> string -> unit async
+  val destroy : t -> unit async
   val where : t -> 'a Js.t -> t
   val returning : t -> string -> t
   val first : t -> from:string -> 'a Js.t option async
@@ -63,7 +64,11 @@ module QueryOps(Config:QueryOpsConfig_t) = struct
 
   external raw : t -> string -> unit Js.Promise.t = "" [@@bs.send]
   let raw t sql =
-      Config.Async.from_promise (raw t sql)
+    Config.Async.from_promise (raw t sql)
+
+  external destroy : t -> unit Js.Promise.t = "" [@@bs.send]
+  let destroy t =
+    Config.Async.from_promise (destroy t)
 
   external where : t -> 'a Js.t -> t = "" [@@bs.send]
   external returning : t -> string -> t = "" [@@bs.send]

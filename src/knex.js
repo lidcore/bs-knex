@@ -15,6 +15,10 @@ function raw(t, sql) {
   return t.raw(sql);
 }
 
+function destroy(t) {
+  return t.destroy();
+}
+
 function first(t, from) {
   var p = t.from(from).first();
   return p.then((function (ret) {
@@ -45,6 +49,10 @@ function execute(client, cb) {
 
 function raw$1(t, sql) {
   return t.raw(sql);
+}
+
+function destroy$1(t) {
+  return t.destroy();
 }
 
 function first$1(t, from) {
@@ -85,6 +93,14 @@ var Seed = /* module */[/* run */run];
 
 function raw$2(t, sql) {
   var partial_arg = t.raw(sql);
+  return (function (param) {
+      partial_arg.asCallback(param);
+      return /* () */0;
+    });
+}
+
+function destroy$2(t) {
+  var partial_arg = t.destroy();
   return (function (param) {
       partial_arg.asCallback(param);
       return /* () */0;
@@ -142,6 +158,14 @@ function execute$1(client, cb) {
 
 function raw$3(t, sql) {
   var partial_arg = t.raw(sql);
+  return (function (param) {
+      partial_arg.asCallback(param);
+      return /* () */0;
+    });
+}
+
+function destroy$3(t) {
+  var partial_arg = t.destroy();
   return (function (param) {
       partial_arg.asCallback(param);
       return /* () */0;
@@ -211,6 +235,9 @@ function Make(funarg) {
   var raw = function (t, sql) {
     return Curry._1(funarg[/* from_promise */0], t.raw(sql));
   };
+  var destroy = function (t) {
+    return Curry._1(funarg[/* from_promise */0], t.destroy());
+  };
   var first = function (t, from) {
     return Curry._2(funarg[/* compose */2], Curry._1(funarg[/* from_promise */0], t.from(from).first()), (function (ret) {
                   return Curry._1(funarg[/* return */3], (ret == null) ? /* None */0 : [ret]);
@@ -236,6 +263,9 @@ function Make(funarg) {
   };
   var raw$1 = function (t, sql) {
     return Curry._1(funarg[/* from_promise */0], t.raw(sql));
+  };
+  var destroy$1 = function (t) {
+    return Curry._1(funarg[/* from_promise */0], t.destroy());
   };
   var first$1 = function (t, from) {
     return Curry._2(funarg[/* compose */2], Curry._1(funarg[/* from_promise */0], t.from(from).first()), (function (ret) {
@@ -265,6 +295,7 @@ function Make(funarg) {
   var Seed = /* module */[/* run */run];
   return [
           raw,
+          destroy,
           (function (prim, prim$1) {
               return prim.where(prim$1);
             }),
@@ -277,6 +308,7 @@ function Make(funarg) {
           insert,
           [
             raw$1,
+            destroy$1,
             (function (prim, prim$1) {
                 return prim.where(prim$1);
               }),
@@ -294,16 +326,17 @@ function Make(funarg) {
         ];
 }
 
-function Promise_001(prim, prim$1) {
+function Promise_002(prim, prim$1) {
   return prim.where(prim$1);
 }
 
-function Promise_002(prim, prim$1) {
+function Promise_003(prim, prim$1) {
   return prim.returning(prim$1);
 }
 
-var Promise_007 = [
+var Promise_008 = [
   raw$1,
+  destroy$1,
   (function (prim, prim$1) {
       return prim.where(prim$1);
     }),
@@ -319,27 +352,29 @@ var Promise_007 = [
 
 var Promise$1 = [
   raw,
-  Promise_001,
+  destroy,
   Promise_002,
+  Promise_003,
   first,
   select$1,
   update,
   insert,
-  Promise_007,
+  Promise_008,
   Migrate,
   Seed
 ];
 
-function Callback_001(prim, prim$1) {
+function Callback_002(prim, prim$1) {
   return prim.where(prim$1);
 }
 
-function Callback_002(prim, prim$1) {
+function Callback_003(prim, prim$1) {
   return prim.returning(prim$1);
 }
 
-var Callback_007 = [
+var Callback_008 = [
   raw$3,
+  destroy$3,
   (function (prim, prim$1) {
       return prim.where(prim$1);
     }),
@@ -355,13 +390,14 @@ var Callback_007 = [
 
 var Callback = [
   raw$2,
-  Callback_001,
+  destroy$2,
   Callback_002,
+  Callback_003,
   first$2,
   select$5,
   update$2,
   insert$2,
-  Callback_007,
+  Callback_008,
   Migrate$1,
   Seed$1
 ];
