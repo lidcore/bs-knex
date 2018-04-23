@@ -9,6 +9,7 @@ val init : config -> client
 module type QueryOps_t = sig
   type t
   type 'a async
+  val raw : t -> string -> unit async
   val where : t -> 'a Js.t -> t
   val returning : t -> string -> t
   val first : t -> from:string -> 'a Js.t option async

@@ -11,6 +11,10 @@ function init(param) {
   return Knex(config);
 }
 
+function raw(t, sql) {
+  return t.raw(sql);
+}
+
 function first(t, from) {
   var p = t.from(from).first();
   return p.then((function (ret) {
@@ -39,6 +43,10 @@ function execute(client, cb) {
   return client.transaction(Curry.__1(cb));
 }
 
+function raw$1(t, sql) {
+  return t.raw(sql);
+}
+
 function first$1(t, from) {
   var p = t.from(from).first();
   return p.then((function (ret) {
@@ -61,6 +69,10 @@ function update$1(t, table, args) {
 
 function insert$1(t, into, args) {
   return t.into(into).insert(args);
+}
+
+function raw$2(t, sql) {
+  return Curry._1(BsCallback.from_promise, t.raw(sql));
 }
 
 function first$2(t, from) {
@@ -92,6 +104,10 @@ function execute$1(client, cb) {
                   })));
 }
 
+function raw$3(t, sql) {
+  return Curry._1(BsCallback.from_promise, t.raw(sql));
+}
+
 function first$3(t, from) {
   return Curry._2(BsCallback.$great$great, Curry._1(BsCallback.from_promise, t.from(from).first()), (function (ret) {
                 return Curry._1(BsCallback.$$return, (ret == null) ? /* None */0 : [ret]);
@@ -116,6 +132,9 @@ function insert$3(t, into, args) {
 }
 
 function Make(funarg) {
+  var raw = function (t, sql) {
+    return Curry._1(funarg[/* from_promise */0], t.raw(sql));
+  };
   var first = function (t, from) {
     return Curry._2(funarg[/* compose */2], Curry._1(funarg[/* from_promise */0], t.from(from).first()), (function (ret) {
                   return Curry._1(funarg[/* return */3], (ret == null) ? /* None */0 : [ret]);
@@ -139,6 +158,9 @@ function Make(funarg) {
                       return Curry._1(funarg[/* to_promise */1], Curry._1(cb, t));
                     })));
   };
+  var raw$1 = function (t, sql) {
+    return Curry._1(funarg[/* from_promise */0], t.raw(sql));
+  };
   var first$1 = function (t, from) {
     return Curry._2(funarg[/* compose */2], Curry._1(funarg[/* from_promise */0], t.from(from).first()), (function (ret) {
                   return Curry._1(funarg[/* return */3], (ret == null) ? /* None */0 : [ret]);
@@ -158,6 +180,7 @@ function Make(funarg) {
     return Curry._1(funarg[/* from_promise */0], t.into(into).insert(args));
   };
   return [
+          raw,
           (function (prim, prim$1) {
               return prim.where(prim$1);
             }),
@@ -169,6 +192,7 @@ function Make(funarg) {
           update,
           insert,
           [
+            raw$1,
             (function (prim, prim$1) {
                 return prim.where(prim$1);
               }),
@@ -184,15 +208,16 @@ function Make(funarg) {
         ];
 }
 
-function Promise_000(prim, prim$1) {
+function Promise_001(prim, prim$1) {
   return prim.where(prim$1);
 }
 
-function Promise_001(prim, prim$1) {
+function Promise_002(prim, prim$1) {
   return prim.returning(prim$1);
 }
 
-var Promise_006 = [
+var Promise_007 = [
+  raw$1,
   (function (prim, prim$1) {
       return prim.where(prim$1);
     }),
@@ -207,24 +232,26 @@ var Promise_006 = [
 ];
 
 var Promise$1 = [
-  Promise_000,
+  raw,
   Promise_001,
+  Promise_002,
   first,
   select$1,
   update,
   insert,
-  Promise_006
+  Promise_007
 ];
 
-function Callback_000(prim, prim$1) {
+function Callback_001(prim, prim$1) {
   return prim.where(prim$1);
 }
 
-function Callback_001(prim, prim$1) {
+function Callback_002(prim, prim$1) {
   return prim.returning(prim$1);
 }
 
-var Callback_006 = [
+var Callback_007 = [
+  raw$3,
   (function (prim, prim$1) {
       return prim.where(prim$1);
     }),
@@ -239,13 +266,14 @@ var Callback_006 = [
 ];
 
 var Callback = [
-  Callback_000,
+  raw$2,
   Callback_001,
+  Callback_002,
   first$2,
   select$5,
   update$2,
   insert$2,
-  Callback_006
+  Callback_007
 ];
 
 exports.init = init;

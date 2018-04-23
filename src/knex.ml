@@ -16,6 +16,7 @@ let init = function
 module type QueryOps_t = sig
   type t
   type 'a async
+  val raw : t -> string -> unit async
   val where : t -> 'a Js.t -> t
   val returning : t -> string -> t
   val first : t -> from:string -> 'a Js.t option async
@@ -52,12 +53,16 @@ module QueryOps(Config:QueryOpsConfig_t) = struct
   type t = Config.t
   type 'a async = 'a Config.Async.t
 
-  external where : t -> 'a Js.t -> t = "where" [@@bs.send]
-  external returning : t -> string -> t = "returning" [@@bs.send]
+  external raw : t -> string -> unit Js.Promise.t = "" [@@bs.send]
+  let raw t sql =
+      Config.Async.from_promise (raw t sql)
+
+  external where : t -> 'a Js.t -> t = "" [@@bs.send]
+  external returning : t -> string -> t = "" [@@bs.send]
 
   external from_ : t -> string -> t = "from" [@@bs.send]
 
-  external first : t -> 'a Js.t Js.Nullable.t Js.Promise.t = "first" [@@bs.send]
+  external first : t -> 'a Js.t Js.Nullable.t Js.Promise.t = "" [@@bs.send]
   let first t ~from =
     Config.Async.compose (Config.Async.from_promise (from_ t from |. first))
                          (fun ret -> Config.Async.return (Js.toOption ret))
@@ -71,11 +76,11 @@ module QueryOps(Config:QueryOpsConfig_t) = struct
 
   external into_ : t -> string -> t = "into" [@@bs.send]
 
-  external update : t -> 'a Js.t -> int Js.Promise.t = "update" [@@bs.send]
+  external update : t -> 'a Js.t -> int Js.Promise.t = "" [@@bs.send]
   let update t ~table args =
     Config.Async.from_promise (from_ t table |. update args)
 
-  external insert : t -> 'a Js.t -> int array Js.Promise.t = "insert" [@@bs.send]
+  external insert : t -> 'a Js.t -> int array Js.Promise.t = "" [@@bs.send]
   let insert t ~into args =
     Config.Async.from_promise (into_ t into |. insert args)
 end
