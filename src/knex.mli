@@ -27,6 +27,14 @@ module type Query_t = sig
   include QueryOps_t with type t := client
 
   module Transaction : Transaction_t with type 'a async := 'a async
+
+  module Migrate : sig
+    val latest : client -> unit async
+  end
+
+  module Seed : sig
+    val run : client -> unit async
+  end
 end
 
 module type AsyncMonad_t = sig

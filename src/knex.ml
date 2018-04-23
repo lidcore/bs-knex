@@ -34,6 +34,14 @@ module type Query_t = sig
   include QueryOps_t with type t := client
 
   module Transaction : Transaction_t with type 'a async := 'a async
+
+  module Migrate : sig
+    val latest : client -> unit async
+  end
+
+  module Seed : sig
+    val run : client -> unit async
+  end
 end
 
 module type AsyncMonad_t = sig
@@ -104,6 +112,22 @@ module Make(Async:AsyncMonad_t) = struct
       type t = transaction
       module Async = Async
     end)
+  end
+
+  module Migrate = struct
+    type migrate
+    external migrate : client -> migrate = "" [@@bs.get]
+    external latest : migrate -> unit Js.Promise.t = "" [@@bs.send]
+    let latest client =
+     Async.from_promise (latest (migrate client))
+  end
+
+  module Seed = struct
+    type seed
+    external seed : client -> seed = "" [@@bs.get]
+    external run : seed -> unit Js.Promise.t = "" [@@bs.send]
+    let run client =
+     Async.from_promise (run (seed client))
   end
 end
 

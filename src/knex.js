@@ -71,6 +71,18 @@ function insert$1(t, into, args) {
   return t.into(into).insert(args);
 }
 
+function latest(client) {
+  return client.migrate.latest();
+}
+
+var Migrate = /* module */[/* latest */latest];
+
+function run(client) {
+  return client.seed.run();
+}
+
+var Seed = /* module */[/* run */run];
+
 function raw$2(t, sql) {
   var partial_arg = t.raw(sql);
   return (function (param) {
@@ -175,6 +187,26 @@ function insert$3(t, into, args) {
     });
 }
 
+function latest$1(client) {
+  var partial_arg = client.migrate.latest();
+  return (function (param) {
+      partial_arg.asCallback(param);
+      return /* () */0;
+    });
+}
+
+var Migrate$1 = /* module */[/* latest */latest$1];
+
+function run$1(client) {
+  var partial_arg = client.seed.run();
+  return (function (param) {
+      partial_arg.asCallback(param);
+      return /* () */0;
+    });
+}
+
+var Seed$1 = /* module */[/* run */run$1];
+
 function Make(funarg) {
   var raw = function (t, sql) {
     return Curry._1(funarg[/* from_promise */0], t.raw(sql));
@@ -223,6 +255,14 @@ function Make(funarg) {
   var insert$1 = function (t, into, args) {
     return Curry._1(funarg[/* from_promise */0], t.into(into).insert(args));
   };
+  var latest = function (client) {
+    return Curry._1(funarg[/* from_promise */0], client.migrate.latest());
+  };
+  var Migrate = /* module */[/* latest */latest];
+  var run = function (client) {
+    return Curry._1(funarg[/* from_promise */0], client.seed.run());
+  };
+  var Seed = /* module */[/* run */run];
   return [
           raw,
           (function (prim, prim$1) {
@@ -248,7 +288,9 @@ function Make(funarg) {
             update$1,
             insert$1,
             execute
-          ]
+          ],
+          Migrate,
+          Seed
         ];
 }
 
@@ -283,7 +325,9 @@ var Promise$1 = [
   select$1,
   update,
   insert,
-  Promise_007
+  Promise_007,
+  Migrate,
+  Seed
 ];
 
 function Callback_001(prim, prim$1) {
@@ -317,7 +361,9 @@ var Callback = [
   select$5,
   update$2,
   insert$2,
-  Callback_007
+  Callback_007,
+  Migrate$1,
+  Seed$1
 ];
 
 exports.init = init;
